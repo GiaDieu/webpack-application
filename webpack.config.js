@@ -1,9 +1,16 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-let mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
+let mode = 'development';
+let target = 'web';
+if (process.env.NODE_ENV === 'production') {
+    mode = 'production';
+    target = 'browserslist';
+}
 
 module.exports = {
     mode: mode,
+    target: target,
     target: 'web',
     module: {
         rules: [
@@ -14,8 +21,18 @@ module.exports = {
                     loader: 'babel-loader',
                 },
             },
+            {
+                test: /\.(s[ac]|c)ss$/i,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'postcss-loader',
+                    'sass-loader',
+                ],
+            },
         ],
     },
+    plugins: [new MiniCssExtractPlugin()],
     devtool: 'source-map',
     devServer: {
         contentBase: './dist',
